@@ -9,23 +9,26 @@ xmlobj = untangle.parse(xml_file)
 
 result = []
 for itm in xmlobj.rss.channel.item:
-    itm_data = {}
-    itm_data['link'] = itm.link.cdata.split('?')[0]
-    try:
-        itm_data['g_brand'] = itm.g_brand.cdata
-    except:
-        itm_data['g_brand'] = ''
-    itm_data['g_availability'] = itm.g_availability.cdata
-    itm_data['category1'] = itm.g_custom_label_0.cdata
-    itm_data['category2'] = itm.g_custom_label_1.cdata
-    itm_data['g_image_link'] = itm.g_image_link.cdata
-    itm_data['g_additional_image_link'] = []
-    try:
-        for img in itm.g_additional_image_link:
-            itm_data['g_additional_image_link'].append(img.cdata)
-    except:
-        pass
-    result.append(itm_data)
+    if itm.g_image_link.cdata[-4:] != '.gif':
+        itm_data = {}
+        itm_data['id'] = itm.g_id.cdata
+        itm_data['link'] = itm.link.cdata.split('?')[0]
+        try:
+            itm_data['g_brand'] = itm.g_brand.cdata
+        except:
+            itm_data['g_brand'] = ''
+        itm_data['g_availability'] = itm.g_availability.cdata
+        itm_data['category1'] = itm.g_custom_label_0.cdata
+        itm_data['category2'] = itm.g_custom_label_1.cdata
+        itm_data['g_image_link'] = itm.g_image_link.cdata
+        itm_data['g_additional_image_link'] = []
+        try:
+            for img in itm.g_additional_image_link:
+                if img.cdata[-4:] != '.gif':
+                    itm_data['g_additional_image_link'].append(img.cdata)
+        except:
+            pass
+        result.append(itm_data)
 
 size_result = []
 for itm in result:
@@ -47,7 +50,8 @@ for itm in result:
     size_result.append(itm)
 print(len(size_result))
 
-csv_columns = ['link',
+csv_columns = ['id',
+               'link',
                'g_brand',
                'g_availability',
                'category1',
